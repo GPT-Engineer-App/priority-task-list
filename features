@@ -1,0 +1,169 @@
+using System;
+using System.Collections.Generic;
+
+class Program
+{
+    static List<Task> tasks = new List<Task>();
+
+    static void Main(string[] args)
+    {
+        bool exit = false;
+
+        while (!exit)
+        {
+            ShowLoadingScreen();
+            DisplayMainMenu();
+
+            string choice = Console.ReadLine();
+            Console.Clear();
+
+            switch (choice)
+            {
+                case "1":
+                    DisplayTasks();
+                    break;
+                case "2":
+                    AddTask();
+                    break;
+                case "3":
+                    MarkTaskAsCompleted();
+                    break;
+                case "4":
+                    SetTaskPriority();
+                    break;
+                case "5":
+                    RemoveTask();
+                    break;
+                case "6":
+                    exit = true;
+                    Console.WriteLine("Exiting the program...");
+                    break;
+                default:
+                    Console.WriteLine("Invalid choice. Please try again.");
+                    break;
+            }
+
+            Console.WriteLine("\nPress any key to continue...");
+            Console.ReadKey();
+            Console.Clear();
+        }
+    }
+
+    static void ShowLoadingScreen()
+    {
+        Console.WriteLine("Loading Task Management System...");
+        System.Threading.Thread.Sleep(2000);
+        Console.Clear();
+    }
+
+    static void DisplayMainMenu()
+    {
+        Console.WriteLine("Task Management System");
+        Console.WriteLine("----------------------");
+        Console.WriteLine("1. Display Tasks");
+        Console.WriteLine("2. Add a Task");
+        Console.WriteLine("3. Mark Task as Completed");
+        Console.WriteLine("4. Set Task Priority");
+        Console.WriteLine("5. Remove a Task");
+        Console.WriteLine("6. Exit");
+        Console.WriteLine("----------------------");
+        Console.Write("Enter your choice: ");
+    }
+
+    static void DisplayTasks()
+    {
+        Console.WriteLine("Current Tasks:");
+        Console.WriteLine("--------------");
+
+        if (tasks.Count == 0)
+        {
+            Console.WriteLine("No tasks found.");
+        }
+        else
+        {
+            for (int i = 0; i < tasks.Count; i++)
+            {
+                Task task = tasks[i];
+                string status = task.IsCompleted ? "Completed" : "Pending";
+                Console.WriteLine($"{i + 1}. [{status}] {task.Description} (Priority: {task.Priority})");
+            }
+        }
+    }
+
+    static void AddTask()
+    {
+        Console.Write("Enter task description: ");
+        string description = Console.ReadLine();
+
+        Task newTask = new Task(description);
+        tasks.Add(newTask);
+
+        Console.WriteLine("Task added successfully.");
+    }
+
+    static void MarkTaskAsCompleted()
+    {
+        Console.Write("Enter the task number to mark as completed: ");
+        if (int.TryParse(Console.ReadLine(), out int taskNumber) && taskNumber > 0 && taskNumber <= tasks.Count)
+        {
+            Task task = tasks[taskNumber - 1];
+            task.IsCompleted = true;
+            Console.WriteLine("Task marked as completed.");
+        }
+        else
+        {
+            Console.WriteLine("Invalid task number.");
+        }
+    }
+
+    static void SetTaskPriority()
+    {
+        Console.Write("Enter the task number to set priority: ");
+        if (int.TryParse(Console.ReadLine(), out int taskNumber) && taskNumber > 0 && taskNumber <= tasks.Count)
+        {
+            Console.Write("Enter the priority level (1-5): ");
+            if (int.TryParse(Console.ReadLine(), out int priority) && priority >= 1 && priority <= 5)
+            {
+                Task task = tasks[taskNumber - 1];
+                task.Priority = priority;
+                Console.WriteLine("Task priority set successfully.");
+            }
+            else
+            {
+                Console.WriteLine("Invalid priority level.");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Invalid task number.");
+        }
+    }
+
+    static void RemoveTask()
+    {
+        Console.Write("Enter the task number to remove: ");
+        if (int.TryParse(Console.ReadLine(), out int taskNumber) && taskNumber > 0 && taskNumber <= tasks.Count)
+        {
+            tasks.RemoveAt(taskNumber - 1);
+            Console.WriteLine("Task removed successfully.");
+        }
+        else
+        {
+            Console.WriteLine("Invalid task number.");
+        }
+    }
+}
+
+class Task
+{
+    public string Description { get; set; }
+    public bool IsCompleted { get; set; }
+    public int Priority { get; set; }
+
+    public Task(string description)
+    {
+        Description = description;
+        IsCompleted = false;
+        Priority = 3; // Default priority level
+    }
+}
